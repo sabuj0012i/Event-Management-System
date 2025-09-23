@@ -1,14 +1,14 @@
-// src/pages/admin/ManageEvents.jsx
 import { useEffect, useState } from "react";
+import axios from "../../api/axiosInstance";
 import EventCard from "../../components/EventCard";
 
 const ManageEvents = () => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetch("/data/events.json") // public/data/events.json থেকে ডাটা ফেচ করবে
-      .then((res) => res.json())
-      .then((data) => setEvents(data))
+    axios
+      .get("/events")
+      .then((res) => setEvents(res.data))
       .catch((err) => console.error("Error loading events:", err));
   }, []);
 

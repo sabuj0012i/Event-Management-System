@@ -1,14 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { Bell, LogOut } from "lucide-react";
-import UserNotification from "../components/UserNotification";
+import api from "../utils/api"; // axios instance
 
 const NavbarAdmin = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
+
+  // Notifications load
+  useEffect(() => {
+    if (showNotifications) {
+      setLoading(true);
+      api
+        .get("/notifications") // BASE_URL + /notifications
+        .then((res) => {
+          setNotifications(res.data || []);
+        })
+        .catch((err) => {
+          console.error("Error loading notifications:", err);
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [showNotifications]);
 
   return (
     <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center relative">
@@ -42,6 +60,16 @@ const NavbarAdmin = () => {
             Pending Requests
           </Link>
           <Link
+            to="/admin/events?status=upcoming"
+            className={`transition-colors ${
+              isActive("/admin/upcoming")
+                ? "text-blue-600 font-bold border-b-2 border-blue-600"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            Upcoming
+          </Link>
+          <Link
             to="/admin/create-event"
             className={`transition-colors ${
               isActive("/admin/create-event")
@@ -60,15 +88,35 @@ const NavbarAdmin = () => {
             onClick={() => setShowNotifications(!showNotifications)}
           >
             <Bell className="w-5 h-5 text-gray-600 hover:text-blue-600 transition-colors cursor-pointer" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-              5
-            </span>
+            {notifications.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                {notifications.length}
+              </span>
+            )}
           </button>
 
-          {/* Dropdown Notifications */}
+          {/* Dropdown Notifications (Modal style) */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80">
-              <UserNotification />
+            <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50 max-h-96 overflow-y-auto divide-y divide-gray-200">
+              {loading ? (
+                <p className="p-4 text-gray-500 text-sm">Loading...</p>
+              ) : notifications.length === 0 ? (
+                <p className="p-4 text-gray-500 text-sm">
+                  No notifications available
+                </p>
+              ) : (
+                notifications.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 hover:bg-gray-50 transition cursor-pointer"
+                  >
+                    <p className="text-sm text-gray-800">{item.message}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(item.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>
@@ -91,7 +139,10 @@ const NavbarAdmin = () => {
               </div>
               <hr className="my-2" />
               <button
-                onClick={() => alert("Logging out...")}
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  window.location.href = "/login";
+                }}
                 className="flex items-center space-x-2 w-full px-3 py-2 hover:bg-gray-100 rounded-lg text-red-600 font-medium transition"
               >
                 <LogOut className="w-4 h-4" />

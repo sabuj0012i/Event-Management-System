@@ -116,8 +116,8 @@ class EventController extends Controller
     {
         $userId = Auth::id();
 
-        // Events directly created by user/admin (with requests and analytics if needed)
-        $events = Event::with(['eventRequests', 'analytics'])->where('created_by', $userId)->get();
+        // Events directly created by user/admin (with analytics)
+        $events = Event::with(['analytics'])->where('created_by', $userId)->get();
 
         // Events requested by user
         $requests = EventRequest::with('event')->where('user_id', $userId)->get();

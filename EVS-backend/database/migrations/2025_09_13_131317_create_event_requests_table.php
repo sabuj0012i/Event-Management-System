@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('venue')->nullable();
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->text('details');
+            $table->text('details')->nullable();
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->string('rejection_message')->nullable();
             $table->timestamps();

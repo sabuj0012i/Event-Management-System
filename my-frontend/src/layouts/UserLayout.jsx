@@ -1,6 +1,6 @@
 import NavbarUser from "../components/NavbarUser";
 import Footer from "../components/Footer";
-import { Outlet } from "react-router";
+import { Outlet } from "react-router-dom";
 
 const UserLayout = () => (
   <div className="flex flex-col min-h-screen">

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // User/Admin Registration (role field supported)
+    // Public Registration (always registers as user)
     public function register(Request $request)
     {
         // Custom email exist check
@@ -24,14 +24,13 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            'role' => 'required|in:user,admin', // Only allow 'user' or 'admin'
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
-            'role' => $validated['role'], // Set the role from request
+            'role' => 'user',
         ]);
 
         // Sanctum token generate
@@ -42,6 +41,45 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token,
         ], 201);
+    }
+
+    // Admin: Create a user (can specify role)
+    public function createUser(Request $request)
+    {
+        if (!$request->user() || $request->user()->role !== 'admin') {
+            return response()->json(['error' => 'Forbidden: Admins only'], 403);
+        }
+
+        if (User::where('email', $request->email)->exists()) {
+            return response()->json([
+                'message' => 'This email is already registered!'
+            ], 409);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+            'role' => 'required|in:user,admin',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+            'role' => $validated['role'],
+        ]);
+
+        return response()->json([
+            'message' => 'User created successfully!',
+            'user' => $user,
+        ], 201);
+    }
+
+    // Get current authenticated user
+    public function me(Request $request)
+    {
+        return response()->json($request->user());
     }
 
     // User Login
@@ -60,16 +98,8 @@ class AuthController extends Controller
             ]);
         }
 
-        // Check if already logged in (has active token)
-        // (Sanctum: tokens() relationship)
-        if ($user->tokens()->where('name', 'auth_token')->exists()) {
-            return response()->json([
-                'message' => 'Already logged in!',
-                'user' => $user,
-            ], 200);
-        }
-
-        // Issue new token
+        // Always issue a fresh token (remove any previous with same name)
+        $user->tokens()->where('name', 'auth_token')->delete();
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

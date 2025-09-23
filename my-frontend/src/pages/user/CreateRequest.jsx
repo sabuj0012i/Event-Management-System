@@ -1,6 +1,7 @@
 // src/pages/user/CreateRequest.jsx
 import { useState } from "react";
-import { CalendarDays, Clock, PlusCircle, Globe, MapPin, FileText } from "lucide-react";
+import { CalendarDays, Clock, PlusCircle, Globe, MapPin, FileText, Link as LinkIcon } from "lucide-react";
+import api from "../../utils/api";
 
 const CreateRequest = () => {
   const [formData, setFormData] = useState({
@@ -11,31 +12,52 @@ const CreateRequest = () => {
     endDate: "",
     endTime: "",
     details: "",
+    venueOrLink: "",
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Event Request Submitted:", formData);
-    alert("Your event request has been submitted!");
-    setFormData({
-      name: "",
-      mode: "online",
-      startDate: "",
-      startTime: "",
-      endDate: "",
-      endTime: "",
-      details: "",
-    });
+
+    // ✅ Backend expected payload তৈরি করলাম
+    const payload = {
+      name: formData.name,
+      mode: formData.mode,
+      meeting_link: formData.mode === "online" ? formData.venueOrLink : null,
+      venue: formData.mode === "offline" ? formData.venueOrLink : null,
+      start_time: `${formData.startDate} ${formData.startTime}`,
+      end_time: `${formData.endDate} ${formData.endTime}`,
+      details: formData.details,
+    };
+
+    try {
+      const res = await api.post("/event-requests", payload);
+      alert("✅ Your event request has been submitted!");
+      console.log("Saved Event:", res.data);
+
+      // Reset form
+      setFormData({
+        name: "",
+        mode: "online",
+        startDate: "",
+        startTime: "",
+        endDate: "",
+        endTime: "",
+        details: "",
+        venueOrLink: "",
+      });
+    } catch (err) {
+      console.error("Error submitting event:", err);
+      alert(err.response?.data?.message || "❌ Failed to submit event request.");
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center p-6">
       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg">
-        {/* Heading */}
         <h2 className="text-2xl font-bold text-gray-800 text-center mb-2">
           Create Event Request
         </h2>
@@ -43,7 +65,6 @@ const CreateRequest = () => {
           Fill in the details below to submit your event request.
         </p>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Event Name */}
           <div>
@@ -91,6 +112,29 @@ const CreateRequest = () => {
                 <MapPin className="w-4 h-4 text-red-500" />
                 Offline
               </label>
+            </div>
+          </div>
+
+          {/* Venue or Link */}
+          <div>
+            <label className="block text-sm font-semibold mb-1 text-gray-700">
+              {formData.mode === "online" ? "Event Link" : "Event Venue"}
+            </label>
+            <div className="relative">
+              {formData.mode === "online" ? (
+                <LinkIcon className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+              ) : (
+                <MapPin className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+              )}
+              <input
+                type="text"
+                name="venueOrLink"
+                value={formData.venueOrLink}
+                onChange={handleChange}
+                placeholder={formData.mode === "online" ? "Enter event link" : "Enter event venue"}
+                required
+                className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              />
             </div>
           </div>
 
@@ -156,7 +200,7 @@ const CreateRequest = () => {
             </div>
           </div>
 
-          {/* Event Details */}
+          {/* Details */}
           <div>
             <label className="block text-sm font-semibold mb-1 text-gray-700">
               Event Details

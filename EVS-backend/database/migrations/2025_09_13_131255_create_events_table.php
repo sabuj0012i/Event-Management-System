@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('venue')->nullable();
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->text('details');
+            $table->text('details')->nullable();
             $table->enum('status', ['upcoming', 'ongoing', 'finished'])->default('upcoming');
             $table->unsignedBigInteger('created_by'); // Foreign key to users
             $table->timestamps();

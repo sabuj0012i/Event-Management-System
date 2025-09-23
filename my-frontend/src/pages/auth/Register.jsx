@@ -1,61 +1,105 @@
-// src/pages/auth/Register.jsx
 import { useState } from "react";
+import { useNavigate } from "react-router";
+import axios from "axios";
 
 const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    password_confirmation: "",
+    role: "user", 
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Register Data:", formData);
-    alert("Registration successful!");
-    setFormData({ name: "", email: "", password: "" });
+    setError("");
+    setLoading(true);
+
+    if (formData.password !== formData.password_confirmation) {
+      setError("Passwords do not match!");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/register", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      });
+
+      console.log("Register response:", response.data);
+      alert("Registration successful! Please login.");
+      navigate("/login");
+    } catch (err) {
+      console.error("Registration failed:", err);
+      setError(err.response?.data?.message || "Registration failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
-      <input
-        type="text"
-        name="name"
-        placeholder="Name"
-        value={formData.name}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-        required
-        className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-      />
-      <button
-        type="submit"
-        className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-      >
+    <div className="max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg p-6">
+      <h2 className="text-2xl font-bold text-center mb-6 text-green-700">
         Register
-      </button>
-    </form>
+      </h2>
+      {error && <p className="text-red-600 text-center mb-3">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <input
+          type="password"
+          name="password_confirmation"
+          placeholder="Confirm Password"
+          value={formData.password_confirmation}
+          onChange={handleChange}
+          required
+          className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition disabled:opacity-50"
+        >
+          {loading ? "Registering..." : "Register"}
+        </button>
+      </form>
+    </div>
   );
 };
 
