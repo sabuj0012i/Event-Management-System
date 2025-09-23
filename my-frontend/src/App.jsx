@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -22,11 +22,19 @@ import Login from "./pages/auth/Login";
 import AdminLogin from "./pages/auth/AdminLogin";
 import AdminRegister from "./pages/auth/AdminRegister";
 import Register from "./pages/auth/Register";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { trackPageView } from "./utils/analytics";
 
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location.pathname, location.search]);
+
   return (
-    <BrowserRouter>
       <Routes>
       
         <Route element={<ProtectedRoute />}>
@@ -53,9 +61,13 @@ function App() {
         <Route element={<AuthLayout />}>
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/register" element={<AdminRegister />} />
         </Route>
+
+        {/* Backwards-compat redirects */}
+        <Route path="/login" element={<Navigate to="/auth" replace />} />
+        <Route path="/register" element={<Navigate to="/auth" replace />} />
       </Routes>
-    </BrowserRouter>
   );
 }
 

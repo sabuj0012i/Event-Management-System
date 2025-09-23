@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router";
 import { Plus } from "lucide-react";
 import EventCard from "../../components/EventCard";
 import api from "../../utils/api";
+import { trackEvent } from "../../utils/analytics";
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -47,7 +48,7 @@ const Events = () => {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <EventCard key={event.id} event={event} onSeeMore={(e)=>setSelected(e)} />
+            <EventCard key={event.id} event={event} onSeeMore={(e)=>{ setSelected(e); trackEvent('event_view', { event_id: event.id }); }} />
           ))}
         </div>
       )}

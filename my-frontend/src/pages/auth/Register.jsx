@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { trackEvent } from "../../utils/analytics";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -41,6 +42,7 @@ const Register = () => {
 
       console.log("Register response:", response.data);
       setMessage({ type: 'success', text: 'Registration successful! Please login.' });
+      trackEvent('sign_up', { method: 'password' });
       navigate("/login");
     } catch (err) {
       console.error("Registration failed:", err);

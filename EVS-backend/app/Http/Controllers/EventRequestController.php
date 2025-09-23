@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EventRequest;
 use App\Models\Event;
 use App\Models\Notification;
+use App\Models\Analytics;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -99,6 +100,9 @@ class EventRequestController extends Controller
             'status' => 'upcoming',
             'created_by' => $eventRequest->user_id
         ]);
+
+        // Ensure analytics row exists for the new event
+        Analytics::firstOrCreate(['event_id' => $event->id], ['views' => 0, 'registrations' => 0]);
 
         $eventRequest->status = 'accepted';
         $eventRequest->save();

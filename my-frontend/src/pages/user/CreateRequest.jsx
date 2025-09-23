@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { CalendarDays, Clock, PlusCircle, Globe, MapPin, FileText, Link as LinkIcon } from "lucide-react";
 import api from "../../utils/api";
+import { trackEvent } from "../../utils/analytics";
 
 const CreateRequest = () => {
   const [formData, setFormData] = useState({
@@ -37,6 +38,7 @@ const CreateRequest = () => {
     try {
       const res = await api.post("/event-requests", payload);
       setMessage({ type: 'success', text: 'Your event request has been submitted.' });
+      trackEvent('event_request_submit', { mode: payload.mode });
       console.log("Saved Event:", res.data);
 
       // Reset form

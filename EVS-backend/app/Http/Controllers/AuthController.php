@@ -113,6 +113,10 @@ class AuthController extends Controller
         $user->tokens()->where('name', 'auth_token')->delete();
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Update last_login timestamp for analytics
+        $user->last_login = now();
+        $user->save();
+
         return response()->json([
             'message' => 'Login successful!',
             'user' => $user,

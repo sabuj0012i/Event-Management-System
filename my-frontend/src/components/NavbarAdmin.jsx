@@ -12,21 +12,20 @@ const NavbarAdmin = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  // Notifications load
+  // Load notifications on mount and when dropdown toggles
   useEffect(() => {
-    if (showNotifications) {
+    const load = () => {
       setLoading(true);
       api
-        .get("/notifications") // BASE_URL + /notifications
-        .then((res) => {
-          setNotifications(res.data || []);
-        })
-        .catch((err) => {
-          console.error("Error loading notifications:", err);
-        })
+        .get("/notifications")
+        .then((res) => setNotifications(res.data || []))
+        .catch((err) => console.error("Error loading notifications:", err))
         .finally(() => setLoading(false));
-    }
-  }, [showNotifications]);
+    };
+    load();
+    const id = setInterval(load, 15000); // poll every 15s
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center relative">
@@ -88,9 +87,9 @@ const NavbarAdmin = () => {
             onClick={() => setShowNotifications(!showNotifications)}
           >
             <Bell className="w-5 h-5 text-gray-600 hover:text-blue-600 transition-colors cursor-pointer" />
-            {notifications.length > 0 && (
+            {notifications.filter(n => !n.is_read).length > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-                {notifications.length}
+                {notifications.filter(n => !n.is_read).length}
               </span>
             )}
           </button>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventRequest;
+use App\Models\Analytics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,6 +31,9 @@ class EventController extends Controller
         if (!$event) {
             return response()->json(['error' => 'Event not found'], 404);
         }
+        // Increment analytics views for this event
+        $analytics = Analytics::firstOrCreate(['event_id' => $event->id], ['views' => 0, 'registrations' => 0]);
+        $analytics->increment('views');
         return response()->json($event, 200);
     }
 

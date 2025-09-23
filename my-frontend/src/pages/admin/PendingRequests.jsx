@@ -23,6 +23,8 @@ const PendingRequests = () => {
 
   useEffect(() => {
     fetchRequests();
+    const id = setInterval(fetchRequests, 15000);
+    return () => clearInterval(id);
   }, []);
 
   const handleAction = async (id, action) => {

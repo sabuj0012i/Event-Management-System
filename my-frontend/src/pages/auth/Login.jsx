@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import api from "../../utils/api";
+import { trackEvent } from "../../utils/analytics";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -28,6 +29,7 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       setMessage({ type: 'success', text: `Welcome ${user.name}!` });
+      trackEvent('login', { method: 'password' });
       navigate("/events");
     } catch (err) {
       console.error("Login failed:", err);
