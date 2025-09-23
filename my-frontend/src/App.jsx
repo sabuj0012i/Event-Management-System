@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import AuthPage from "./pages/auth/AuthPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // User pages
@@ -32,6 +33,7 @@ function App() {
           <Route element={<UserLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/events" element={<Events />} />
+            <Route path="/events/upcoming" element={<Events />} />
             <Route path="/my-events" element={<MyEvents />} />
             <Route path="/create-request" element={<CreateRequest />} />
           </Route>
@@ -49,12 +51,8 @@ function App() {
 
   
         <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-
-  
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/register" element={<AdminRegister />} />
         </Route>
       </Routes>
     </BrowserRouter>

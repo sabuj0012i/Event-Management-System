@@ -19,8 +19,16 @@ const AdminLogin = () => {
         headers: { "Content-Type": "application/json" },
       });
 
+      // Ensure the logged in user is an admin
+      if (res.data?.user?.role !== 'admin') {
+        alert('This account is not an admin.');
+        return;
+      }
+
       // Save token and admin user
       loginAdmin(res.data.token, res.data.user);
+      // Persist immediately for upcoming requests
+      localStorage.setItem('adminToken', res.data.token);
 
       // Redirect to dashboard
       navigate("/admin/dashboard");

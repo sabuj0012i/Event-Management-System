@@ -5,7 +5,7 @@ import api from "../../utils/api";
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState(null); // {type: 'success'|'error', text}
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -14,7 +14,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setMessage(null);
     setLoading(true);
 
     try {
@@ -27,11 +27,11 @@ const Login = () => {
       localStorage.setItem("authToken", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      alert(`Welcome ${user.name}!`);
+      setMessage({ type: 'success', text: `Welcome ${user.name}!` });
       navigate("/events");
     } catch (err) {
       console.error("Login failed:", err);
-      setError(err.response?.data?.message || "Login failed. Try again!");
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Login failed. Try again!' });
     } finally {
       setLoading(false);
       setFormData({ email: "", password: "" });
@@ -43,7 +43,11 @@ const Login = () => {
       <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">
         Login
       </h2>
-      {error && <p className="text-red-600 text-center mb-3">{error}</p>}
+      {message && (
+        <div className={`mb-3 p-3 rounded text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+          {message.text}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="email"

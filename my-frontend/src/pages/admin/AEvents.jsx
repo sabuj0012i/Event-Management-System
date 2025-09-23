@@ -15,7 +15,7 @@ const Events = () => {
       .get(url)
       .then((res) => setEvents(res.data))
       .catch((err) => console.error("Error loading events:", err));
-  }, []);
+  }, [window.location.search]);
 
   return (
     <div className="p-4 max-w-5xl mx-auto">

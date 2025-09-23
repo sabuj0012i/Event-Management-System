@@ -62,7 +62,7 @@ const NavbarAdmin = () => {
           <Link
             to="/admin/events?status=upcoming"
             className={`transition-colors ${
-              isActive("/admin/upcoming")
+              location.pathname === "/admin/events" && new URLSearchParams(location.search).get('status') === 'upcoming'
                 ? "text-blue-600 font-bold border-b-2 border-blue-600"
                 : "text-gray-700 hover:text-blue-600"
             }`}
@@ -140,8 +140,9 @@ const NavbarAdmin = () => {
               <hr className="my-2" />
               <button
                 onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.href = "/login";
+                  localStorage.removeItem("adminToken");
+                  localStorage.removeItem("user");
+                  window.location.href = "/admin/login";
                 }}
                 className="flex items-center space-x-2 w-full px-3 py-2 hover:bg-gray-100 rounded-lg text-red-600 font-medium transition"
               >

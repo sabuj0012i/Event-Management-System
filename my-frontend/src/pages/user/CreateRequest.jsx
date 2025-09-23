@@ -14,6 +14,7 @@ const CreateRequest = () => {
     details: "",
     venueOrLink: "",
   });
+  const [message, setMessage] = useState(null); // { type: 'success'|'error', text: string }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,7 +36,7 @@ const CreateRequest = () => {
 
     try {
       const res = await api.post("/event-requests", payload);
-      alert("✅ Your event request has been submitted!");
+      setMessage({ type: 'success', text: 'Your event request has been submitted.' });
       console.log("Saved Event:", res.data);
 
       // Reset form
@@ -51,7 +52,7 @@ const CreateRequest = () => {
       });
     } catch (err) {
       console.error("Error submitting event:", err);
-      alert(err.response?.data?.message || "❌ Failed to submit event request.");
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to submit event request.' });
     }
   };
 
@@ -64,6 +65,12 @@ const CreateRequest = () => {
         <p className="text-gray-500 text-center mb-6">
           Fill in the details below to submit your event request.
         </p>
+
+        {message && (
+          <div className={`mb-4 p-3 rounded-xl text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+            {message.text}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Event Name */}

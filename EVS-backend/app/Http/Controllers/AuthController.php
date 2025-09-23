@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -35,6 +36,16 @@ class AuthController extends Controller
 
         // Sanctum token generate
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Notify all admins about new user registration
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'message' => "New user registered: {$user->name} ({$user->email})",
+                'is_read' => false,
+            ]);
+        }
 
         return response()->json([
             'message' => 'Registration successful!',

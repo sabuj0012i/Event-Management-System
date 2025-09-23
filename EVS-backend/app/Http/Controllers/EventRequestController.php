@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EventRequest;
 use App\Models\Event;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +35,16 @@ class EventRequestController extends Controller
             'details' => $validated['details'] ?? null,
             'status' => 'pending'
         ]);
+
+        // Notify all admins about the new event request
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'message' => "New event request submitted by ".Auth::user()->name.": '{$validated['name']}'",
+                'is_read' => false,
+            ]);
+        }
 
         return response()->json($eventRequest, 201);
     }

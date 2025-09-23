@@ -58,7 +58,7 @@ const NavbarUser = () => {
     }
   }, [isNotificationOpen]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   return (
     <nav className="bg-white shadow-md px-6 py-3 flex justify-between items-center relative">
@@ -71,7 +71,7 @@ const NavbarUser = () => {
           <Link
             to="/events"
             className={`transition-colors ${
-              isActive("/events")
+              location.pathname === "/events"
                 ? "text-blue-600 font-bold border-b-2 border-blue-600"
                 : "text-gray-700 hover:text-blue-600"
             }`}
@@ -79,9 +79,9 @@ const NavbarUser = () => {
             All Events
           </Link>
           <Link
-            to="/events?status=upcoming"
+            to="/events/upcoming"
             className={`transition-colors ${
-              isActive("/upcoming")
+              location.pathname === "/events/upcoming"
                 ? "text-blue-600 font-bold border-b-2 border-blue-600"
                 : "text-gray-700 hover:text-blue-600"
             }`}

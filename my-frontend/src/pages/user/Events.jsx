@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Plus } from "lucide-react";
 import EventCard from "../../components/EventCard";
 import api from "../../utils/api";
@@ -9,12 +9,13 @@ const Events = () => {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const location = useLocation();
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const params = new URLSearchParams(window.location.search);
-        const status = params.get('status');
-        const url = status ? `/events?status=${status}` : '/events';
+        const isUpcoming = location.pathname.endsWith('/upcoming');
+        const url = isUpcoming ? `/events?status=upcoming` : '/events';
         const res = await api.get(url);
         setEvents(res.data); // backend returns array
       } catch (err) {
@@ -24,7 +25,7 @@ const Events = () => {
       }
     };
     fetchEvents();
-  }, []);
+  }, [location.pathname]);
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
