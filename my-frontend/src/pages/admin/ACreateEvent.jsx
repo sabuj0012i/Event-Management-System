@@ -1,4 +1,3 @@
-// Admin create event (direct create via backend)
 import { useState } from "react";
 import { CalendarDays, Clock, PlusCircle, Globe, MapPin, FileText, Link as LinkIcon } from "lucide-react";
 import api from "../../utils/api";
@@ -17,13 +16,10 @@ const ACreateEvent = () => {
   });
   const [message, setMessage] = useState(null);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const payload = {
       name: formData.name,
       mode: formData.mode,
@@ -35,10 +31,9 @@ const ACreateEvent = () => {
     };
 
     try {
-      const res = await api.post("/events", payload);
-      setMessage({ type: 'success', text: 'Event created successfully.' });
-      trackEvent('create_event', { mode: payload.mode });
-      console.log("Created Event:", res.data);
+      await api.post("/events", payload);
+      setMessage({ type: "success", text: "Event created successfully." });
+      trackEvent("create_event", { mode: payload.mode });
       setFormData({
         name: "",
         mode: "online",
@@ -49,27 +44,37 @@ const ACreateEvent = () => {
         details: "",
         venueOrLink: "",
       });
-      // Optionally redirect to events list
       window.location.href = "/admin/events";
     } catch (err) {
-      console.error("Error creating event:", err);
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to create event.' });
+      setMessage({
+        type: "error",
+        text: err.response?.data?.message || "Failed to create event.",
+      });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center p-6">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg">
-        <h2 className="text-2xl font-bold text-gray-800 text-center mb-2">Create Event</h2>
-        <p className="text-gray-500 text-center mb-6">Fill in the details below to create a new event.</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center p-4 sm:p-6">
+      <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-lg">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-2">
+          Create Event
+        </h2>
+        <p className="text-gray-500 text-center mb-6">
+          Fill in the details below to create a new event.
+        </p>
 
         {message && (
-          <div className={`mb-4 p-3 rounded-xl text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+          <div
+            className={`mb-4 p-3 rounded-xl text-sm ${
+              message.type === "success"
+                ? "bg-green-50 text-green-700 border border-green-200"
+                : "bg-red-50 text-red-700 border border-red-200"
+            }`}
+          >
             {message.text}
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Event Name */}
           <div>
@@ -89,8 +94,10 @@ const ACreateEvent = () => {
 
           {/* Event Mode */}
           <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700">Event Mode</label>
-            <div className="flex items-center gap-6">
+            <label className="block text-sm font-semibold mb-1 text-gray-700">
+              Event Mode
+            </label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
@@ -120,7 +127,9 @@ const ACreateEvent = () => {
 
           {/* Venue or Link */}
           <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700">{formData.mode === "online" ? "Event Link" : "Event Venue"}</label>
+            <label className="block text-sm font-semibold mb-1 text-gray-700">
+              {formData.mode === "online" ? "Event Link" : "Event Venue"}
+            </label>
             <div className="relative">
               {formData.mode === "online" ? (
                 <LinkIcon className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
@@ -141,8 +150,10 @@ const ACreateEvent = () => {
 
           {/* Start Date & Time */}
           <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700">Start Date & Time</label>
-            <div className="flex gap-3">
+            <label className="block text-sm font-semibold mb-1 text-gray-700">
+              Start Date & Time
+            </label>
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <CalendarDays className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
                 <input
@@ -170,8 +181,10 @@ const ACreateEvent = () => {
 
           {/* End Date & Time */}
           <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700">End Date & Time</label>
-            <div className="flex gap-3">
+            <label className="block text-sm font-semibold mb-1 text-gray-700">
+              End Date & Time
+            </label>
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <CalendarDays className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
                 <input
@@ -199,7 +212,9 @@ const ACreateEvent = () => {
 
           {/* Details */}
           <div>
-            <label className="block text-sm font-semibold mb-1 text-gray-700">Event Details</label>
+            <label className="block text-sm font-semibold mb-1 text-gray-700">
+              Event Details
+            </label>
             <div className="relative">
               <FileText className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
               <textarea

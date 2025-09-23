@@ -30,7 +30,7 @@ const EventCard = ({ event, onSeeMore }) => {
       {onSeeMore && (
         <button
           onClick={() => onSeeMore(event)}
-          className="mt-1 text-sm font-semibold text-blue-700 hover:text-blue-900"
+          className="mt-1 text-sm font-semibold text-blue-700 hover:text-blue-900 cursor-pointer"
         >
           See more
         </button>

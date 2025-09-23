@@ -16,6 +16,7 @@ export default defineConfig({
         name: "Event Management System",
         short_name: "Event",
         start_url: "/",
+        scope: "/",
         display: "standalone",
         background_color: "#ffffff",
         theme_color: "#2563eb",

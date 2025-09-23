@@ -14,6 +14,7 @@ import CreateRequest from "./pages/user/CreateRequest";
 // Admin pages
 import Dashboard from "./pages/admin/Dashboard";
 import AEvents from "./pages/admin/AEvents";
+import Ahome from "./pages/admin/Ahome";
 import ACreateEvent from "./pages/admin/ACreateEvent";
 import PendingRequests from "./pages/admin/PendingRequests";
 
@@ -50,7 +51,7 @@ function App() {
         
         <Route element={<ProtectedRoute admin />}>
           <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="" element={<Ahome/>} />
             <Route path="analytics" element={<Dashboard />} />
             <Route path="events" element={<AEvents />} />
             <Route path="create-event" element={<ACreateEvent />} />

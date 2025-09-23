@@ -15,7 +15,7 @@ const CreateRequest = () => {
     details: "",
     venueOrLink: "",
   });
-  const [message, setMessage] = useState(null); // { type: 'success'|'error', text: string }
+  const [message, setMessage] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +24,6 @@ const CreateRequest = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Backend expected payload তৈরি করলাম
     const payload = {
       name: formData.name,
       mode: formData.mode,
@@ -37,11 +36,10 @@ const CreateRequest = () => {
 
     try {
       const res = await api.post("/event-requests", payload);
-      setMessage({ type: 'success', text: 'Your event request has been submitted.' });
-      trackEvent('event_request_submit', { mode: payload.mode });
+      setMessage({ type: "success", text: "Your event request has been submitted." });
+      trackEvent("event_request_submit", { mode: payload.mode });
       console.log("Saved Event:", res.data);
 
-      // Reset form
       setFormData({
         name: "",
         mode: "online",
@@ -54,22 +52,31 @@ const CreateRequest = () => {
       });
     } catch (err) {
       console.error("Error submitting event:", err);
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to submit event request.' });
+      setMessage({
+        type: "error",
+        text: err.response?.data?.message || "Failed to submit event request.",
+      });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center p-6">
-      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg">
-        <h2 className="text-2xl font-bold text-gray-800 text-center mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center p-4 sm:p-6">
+      <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-lg">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center mb-2">
           Create Event Request
         </h2>
-        <p className="text-gray-500 text-center mb-6">
+        <p className="text-gray-500 text-center mb-6 text-sm sm:text-base">
           Fill in the details below to submit your event request.
         </p>
 
         {message && (
-          <div className={`mb-4 p-3 rounded-xl text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+          <div
+            className={`mb-4 p-3 rounded-xl text-sm ${
+              message.type === "success"
+                ? "bg-green-50 text-green-700 border border-green-200"
+                : "bg-red-50 text-red-700 border border-red-200"
+            }`}
+          >
             {message.text}
           </div>
         )}
@@ -87,7 +94,7 @@ const CreateRequest = () => {
               onChange={handleChange}
               placeholder="Enter event name"
               required
-              className="w-full border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              className="w-full border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:text-base"
             />
           </div>
 
@@ -96,7 +103,7 @@ const CreateRequest = () => {
             <label className="block text-sm font-semibold mb-1 text-gray-700">
               Event Mode
             </label>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
@@ -142,7 +149,7 @@ const CreateRequest = () => {
                 onChange={handleChange}
                 placeholder={formData.mode === "online" ? "Enter event link" : "Enter event venue"}
                 required
-                className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:text-base"
               />
             </div>
           </div>
@@ -152,7 +159,7 @@ const CreateRequest = () => {
             <label className="block text-sm font-semibold mb-1 text-gray-700">
               Start Date & Time
             </label>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <CalendarDays className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
                 <input
@@ -161,7 +168,7 @@ const CreateRequest = () => {
                   value={formData.startDate}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:text-base"
                 />
               </div>
               <div className="relative flex-1">
@@ -172,7 +179,7 @@ const CreateRequest = () => {
                   value={formData.startTime}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -183,7 +190,7 @@ const CreateRequest = () => {
             <label className="block text-sm font-semibold mb-1 text-gray-700">
               End Date & Time
             </label>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
                 <CalendarDays className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
                 <input
@@ -192,7 +199,7 @@ const CreateRequest = () => {
                   value={formData.endDate}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:text-base"
                 />
               </div>
               <div className="relative flex-1">
@@ -203,7 +210,7 @@ const CreateRequest = () => {
                   value={formData.endTime}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -223,7 +230,7 @@ const CreateRequest = () => {
                 placeholder="Write a short description of your event..."
                 rows="4"
                 required
-                className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition resize-none"
+                className="w-full pl-10 border border-gray-300 p-3 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition resize-none text-sm sm:text-base"
               ></textarea>
             </div>
           </div>
@@ -231,7 +238,7 @@ const CreateRequest = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-blue-700 hover:scale-[1.02] active:scale-95 shadow-lg transition"
+            className="w-full bg-blue-600 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-blue-700 hover:scale-[1.02] active:scale-95 shadow-lg transition text-sm sm:text-base"
           >
             <PlusCircle className="w-5 h-5" />
             Submit Request

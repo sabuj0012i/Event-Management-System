@@ -61,7 +61,7 @@ const Events = () => {
             <p className="text-sm text-gray-600">Start: {selected.start_time ? new Date(selected.start_time).toLocaleString() : "-"}</p>
             <p className="text-sm text-gray-600 mb-4">End: {selected.end_time ? new Date(selected.end_time).toLocaleString() : "-"}</p>
             <div className="text-right">
-              <button className="px-4 py-2 rounded-lg bg-blue-600 text-white" onClick={()=>setSelected(null)}>Close</button>
+              <button className="px-4 py-2 rounded-lg bg-blue-600 text-white cursor-pointer" onClick={()=>setSelected(null)}>Close</button>
             </div>
           </div>
         </div>
