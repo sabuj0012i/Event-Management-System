@@ -49,6 +49,16 @@ const NavbarAdmin = () => {
             All Events
           </Link>
           <Link
+            to="/admin/analytics"
+            className={`transition-colors ${
+              isActive("/admin/analytics")
+                ? "text-blue-600 font-bold border-b-2 border-blue-600"
+                : "text-gray-700 hover:text-blue-600"
+            }`}
+          >
+            Analytics
+          </Link>
+          <Link
             to="/admin/pending-requests"
             className={`transition-colors ${
               isActive("/admin/pending-requests")

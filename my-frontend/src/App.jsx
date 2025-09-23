@@ -51,6 +51,7 @@ function App() {
         <Route element={<ProtectedRoute admin />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="analytics" element={<Dashboard />} />
             <Route path="events" element={<AEvents />} />
             <Route path="create-event" element={<ACreateEvent />} />
             <Route path="pending-requests" element={<PendingRequests />} />
