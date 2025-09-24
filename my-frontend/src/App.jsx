@@ -4,6 +4,10 @@ import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import AuthPage from "./pages/auth/AuthPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import OfflineIndicator from "./components/OfflineIndicator";
+import PWAUpdateNotification from "./components/PWAUpdateNotification";
+import PWAStatus from "./components/PWAStatus";
 
 // User pages
 import Home from "./pages/user/Home";
@@ -36,8 +40,8 @@ function App() {
   }, [location.pathname, location.search]);
 
   return (
+    <>
       <Routes>
-      
         <Route element={<ProtectedRoute />}>
           <Route element={<UserLayout />}>
             <Route path="/" element={<Home />} />
@@ -48,7 +52,6 @@ function App() {
           </Route>
         </Route>
 
-        
         <Route element={<ProtectedRoute admin />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="" element={<Ahome/>} />
@@ -59,7 +62,6 @@ function App() {
           </Route>
         </Route>
 
-  
         <Route element={<AuthLayout />}>
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -70,6 +72,13 @@ function App() {
         <Route path="/login" element={<Navigate to="/auth" replace />} />
         <Route path="/register" element={<Navigate to="/auth" replace />} />
       </Routes>
+      
+      {/* PWA Components */}
+      <PWAStatus />
+      <PWAInstallPrompt />
+      <OfflineIndicator />
+      <PWAUpdateNotification />
+    </>
   );
 }
 

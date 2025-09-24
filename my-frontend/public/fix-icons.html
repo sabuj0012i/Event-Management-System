@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix PWA Icons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .icon-preview {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .icon-content {
+            color: white;
+            font-size: 80px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .download-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .download-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .download-btn:hover {
+            background: #1d4ed8;
+        }
+        .sizes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .size-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .warning { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fix PWA Icons</h1>
+        <p>This tool will generate proper PNG icons for your PWA to fix the installability issue.</p>
+        
+        <div class="icon-preview">
+            <div class="icon-content">📅</div>
+        </div>
+        
+        <div id="status" class="status warning">
+            Ready to generate icons. Click "Generate All Icons" to create PNG files.
+        </div>
+        
+        <div class="download-section">
+            <h3>Generate PNG Icons</h3>
+            <p>Click the button below to generate all required PNG icons:</p>
+            
+            <button class="download-btn" onclick="generateAllIcons()" style="background: #10b981; font-size: 16px; padding: 15px 30px;">
+                Generate All Icons
+            </button>
+            
+            <div class="sizes">
+                <div class="size-item">
+                    <div>72x72</div>
+                    <button class="download-btn" onclick="generateIcon(72)">Generate</button>
+                </div>
+                <div class="size-item">
+                    <div>96x96</div>
+                    <button class="download-btn" onclick="generateIcon(96)">Generate</button>
+                </div>
+                <div class="size-item">
+                    <div>128x128</div>
+                    <button class="download-btn" onclick="generateIcon(128)">Generate</button>
+                </div>
+                <div class="size-item">
+                    <div>144x144</div>
+                    <button class="download-btn" onclick="generateIcon(144)">Generate</button>
+                </div>
+                <div class="size-item">
+                    <div>152x152</div>
+                    <button class="download-btn" onclick="generateIcon(152)">Generate</button>
+                </div>
+                <div class="size-item">
+                    <div>192x192</div>
+                    <button class="download-btn" onclick="generateIcon(192)">Generate</button>
+                </div>
+                <div class="size-item">
+                    <div>384x384</div>
+                    <button class="download-btn" onclick="generateIcon(384)">Generate</button>
+                </div>
+                <div class="size-item">
+                    <div>512x512</div>
+                    <button class="download-btn" onclick="generateIcon(512)">Generate</button>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Click "Generate All Icons" to download all PNG files</li>
+                <li>Save the downloaded files to your <code>my-frontend/public/icons/</code> directory</li>
+                <li>Replace any existing SVG files with the new PNG files</li>
+                <li>Rebuild your app with <code>npm run build</code></li>
+                <li>Test PWA installability again</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let generatedCount = 0;
+        const totalIcons = 8;
+        
+        function generateIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#2563eb');
+            gradient.addColorStop(1, '#1d4ed8');
+            
+            // Draw background
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add rounded corners
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.beginPath();
+            const radius = size * 0.1;
+            ctx.roundRect(0, 0, size, size, radius);
+            ctx.fill();
+            
+            // Reset composite operation
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // Draw calendar icon
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.4}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = size * 0.02;
+            ctx.shadowOffsetY = size * 0.01;
+            
+            // Draw calendar emoji as text
+            ctx.fillText('📅', size / 2, size / 2);
+            
+            // Convert to blob and download
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}x${size}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                generatedCount++;
+                updateStatus();
+            });
+        }
+        
+        function generateAllIcons() {
+            const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+            generatedCount = 0;
+            
+            sizes.forEach((size, index) => {
+                setTimeout(() => generateIcon(size), index * 200);
+            });
+        }
+        
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            if (generatedCount === 0) {
+                statusDiv.innerHTML = '<div class="status warning">Ready to generate icons. Click "Generate All Icons" to create PNG files.</div>';
+            } else if (generatedCount < totalIcons) {
+                statusDiv.innerHTML = `<div class="status info">Generated ${generatedCount}/${totalIcons} icons...</div>`;
+            } else {
+                statusDiv.innerHTML = '<div class="status success">✅ All icons generated successfully! Save them to your icons/ directory.</div>';
+            }
+        }
+        
+        // Add roundRect polyfill for older browsers
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                this.beginPath();
+                this.moveTo(x + radius, y);
+                this.lineTo(x + width - radius, y);
+                this.quadraticCurveTo(x + width, y, x + width, y + radius);
+                this.lineTo(x + width, y + height - radius);
+                this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                this.lineTo(x + radius, y + height);
+                this.quadraticCurveTo(x, y + height, x, y + height - radius);
+                this.lineTo(x, y + radius);
+                this.quadraticCurveTo(x, y, x + radius, y);
+                this.closePath();
+            };
+        }
+    </script>
+</body>
+</html>
